@@ -151,8 +151,8 @@ const initial = {
    */
   ui: {
     tiles: {
-      current: "streets", // ['openstreetmap', 'streets', 'satellite'] (2nd two require a mapbox access token)
-      default: "streets", // ['openstreetmap', 'streets', 'satellite']
+      current: "openstreetmap", // ['openstreetmap', 'streets', 'satellite'] (2nd two require a mapbox access token)
+      default: "openstreetmap", // ['openstreetmap', 'streets', 'satellite']
     },
     style: {
       categories: {

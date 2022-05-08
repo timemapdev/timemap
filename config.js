@@ -26,6 +26,10 @@ module.exports = {
         layout: {
           template: 'sourced'
         }
+      },
+      tiles:{
+        current: "streets", 
+        default: "streets",
       }
     },
     features: {
