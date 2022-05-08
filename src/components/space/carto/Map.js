@@ -104,6 +104,8 @@ class Map extends React.Component {
     }
   }
 
+  // https://studio.mapbox.com/styles/dmitrig/cl2xts14f000414t4geqv53r5/edit/#9/37.78/-122.4241
+
   getTileUrl(tiles) {
     if (
       tiles === "openstreetmap" ||
@@ -117,7 +119,7 @@ class Map extends React.Component {
       return `http://a.tiles.mapbox.com/v4/mapbox.${tiles}/{z}/{x}/{y}@2x.png?access_token=${process.env.MAPBOX_TOKEN}`;
     }
 
-    return `http://a.tiles.mapbox.com/styles/v1/${this.props.ui.tiles}/tiles/{z}/{x}/{y}?access_token=${process.env.MAPBOX_TOKEN}`;
+    return `http://api.mapbox.com/styles/v1/dmitrig/${this.props.ui.tiles}/tiles/{z}/{x}/{y}?access_token=${process.env.MAPBOX_TOKEN}`;
   }
 
   /**

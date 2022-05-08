@@ -9,7 +9,7 @@ module.exports = {
   SHAPES_EXT: '',
   DATE_FMT: 'DD/MM/YYYY',
   TIME_FMT: 'hh:mm',
-  MAPBOX_TOKEN: 'your_token',
+  MAPBOX_TOKEN: 'pk.eyJ1IjoiZG1pdHJpZyIsImEiOiJjbDJjYnpreTIwY28yM2dudWQ0NGlxejl6In0.qzCHDJ0dRBn6BXy4fkqTIg',
   store: {
     app: {
       map: {
@@ -28,8 +28,8 @@ module.exports = {
         }
       },
       tiles:{
-        current: "streets", 
-        default: "streets",
+        current: "cl2xts14f000414t4geqv53r5", 
+        default: "cl2xts14f000414t4geqv53r5",
       }
     },
     features: {
