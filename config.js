@@ -9,7 +9,7 @@ module.exports = {
   SHAPES_EXT: '',
   DATE_FMT: 'DD/MM/YYYY',
   TIME_FMT: 'hh:mm',
-  MAPBOX_TOKEN: 'pk.eyJ1IjoiZG1pdHJpZyIsImEiOiJjbDJ4cjFtN2wwODdlM2pxeXdlZGxuejg2In0.bNh4GHrz5sbeNLERSyDvkA',
+  MAPBOX_TOKEN: 'your_token',
   store: {
     app: {
       map: {

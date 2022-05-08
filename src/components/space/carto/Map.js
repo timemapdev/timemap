@@ -113,9 +113,9 @@ class Map extends React.Component {
       return "https://maps.wikimedia.org/osm-intl/{z}/{x}/{y}.png";
     }
 
-    // if (supportedMapboxMap.indexOf(this.props.ui.tiles) !== -1) {
-    //   return `http://a.tiles.mapbox.com/v4/mapbox.${tiles}/{z}/{x}/{y}@2x.png?access_token=${process.env.MAPBOX_TOKEN}`;
-    // }
+    if (supportedMapboxMap.indexOf(this.props.ui.tiles) !== -1) {
+      return `http://a.tiles.mapbox.com/v4/mapbox.${tiles}/{z}/{x}/{y}@2x.png?access_token=${process.env.MAPBOX_TOKEN}`;
+    }
 
     return `http://a.tiles.mapbox.com/styles/v1/${this.props.ui.tiles}/tiles/{z}/{x}/{y}?access_token=${process.env.MAPBOX_TOKEN}`;
   }
