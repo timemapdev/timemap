@@ -5,14 +5,15 @@
   "homepage": ".",
   "private": true,
   "scripts": {
-    "dev": "node scripts/start.js",
+    "dev": "NODE_ENV=development node scripts/start.js",
     "build": "NODE_ENV=production node scripts/build.js",
     "dev:wsl": "HOST=0.0.0.0 npm run dev",
     "test": "node scripts/test.js --silent",
     "test:ava": "NODE_ENV=production ava --verbose",
     "test-watch": "ava --watch",
     "lint": "prettier --check \"src/**/*.{js,jsx,ts,tsx,json,css,scss,md}\"",
-    "lint:fix": "prettier --write \"src/**/*.{js,jsx,ts,tsx,json,css,scss,md}\""
+    "lint:fix": "prettier --write \"src/**/*.{js,jsx,ts,tsx,json,css,scss,md}\"",
+    "tunnel": "ngrok http --region=eu --hostname=timemap.eu.ngrok.io 8080"
   },
   "dependencies": {
     "@babel/core": "7.12.3",
@@ -67,7 +68,6 @@
     "postcss-normalize": "8.0.1",
     "postcss-preset-env": "6.7.0",
     "postcss-safe-parser": "5.0.2",
-    "prettier": "^2.2.1",
     "prompts": "2.4.0",
     "ramda": "^0.26.1",
     "react": "^18.0.0",
@@ -103,7 +103,9 @@
   "devDependencies": {
     "@babel/highlight": "^7.14.5",
     "ava": "1.0.0-beta.8",
+    "eslint-visitor-keys": "^3.3.0",
     "mocha": "^5.2.0",
+    "prettier": "^2.6.2",
     "redux-devtools": "^3.4.0",
     "sass": "^1.50.0"
   },

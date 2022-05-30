@@ -1,10 +1,10 @@
-import React, { useRef } from "react";
-import { useCallback } from "react";
-import { typeForPath } from "../../../common/utilities";
-import { TwitterTweetEmbed } from "react-twitter-embed";
-import TelegramPostEmbed from "./TelegramEmbed";
+import React, { useRef } from 'react'
+import { useCallback } from 'react'
+import { typeForPath } from '../../../common/utilities'
+import { TwitterTweetEmbed } from 'react-twitter-embed'
+import TelegramPostEmbed from './TelegramEmbed'
 
-const TITLE_LENGTH = 50;
+const TITLE_LENGTH = 50
 // TODO should videos
 //    - play inline
 //    - appear zoomed out/in
@@ -12,22 +12,22 @@ const TITLE_LENGTH = 50;
 //    - show video control plane?
 // TODO landscape image doesn't fit in box properly
 const Media = ({ src, title }) => {
-  const videoRef = useRef();
+  const videoRef = useRef()
   const onVideoStart = useCallback(() => {
-    return videoRef.current?.play();
-  }, []);
+    return videoRef.current?.play()
+  }, [])
   const onVideoStop = useCallback(() => {
-    return videoRef.current?.pause();
-  }, []);
+    return videoRef.current?.pause()
+  }, [])
 
-  const type = typeForPath(src);
+  const type = typeForPath(src)
   const formattedTitle =
     title && title.length > TITLE_LENGTH
       ? `${title.slice(0, TITLE_LENGTH + 1)}...`
-      : title;
+      : title
 
   switch (type) {
-    case "Video":
+    case 'Video':
       return (
         <div className="card-cell media">
           {title && <h4 title={title}>{formattedTitle}</h4>}
@@ -42,8 +42,8 @@ const Media = ({ src, title }) => {
             <source src={src} />
           </video>
         </div>
-      );
-    case "Image":
+      )
+    case 'Image':
       return (
         <div className="card-cell media">
           {title && <h4 title={title}>{formattedTitle}</h4>}
@@ -54,28 +54,28 @@ const Media = ({ src, title }) => {
             />
           </div>
         </div>
-      );
+      )
 
-    case "Telegram":
+    case 'Telegram':
       return (
         <div className="card-cell media embedded">
           <TelegramPostEmbed src={src} />
         </div>
-      );
+      )
 
-    case "Tweet":
+    case 'Tweet':
       const tweetIdRegex =
-        /https?:\/\/twitter.com\/[0-9a-zA-Z_]{1,20}\/status\/([0-9]*)/;
-      const match = tweetIdRegex.exec(src);
-      const tweetId = match[1];
+        /https?:\/\/twitter.com\/[0-9a-zA-Z_]{1,20}\/status\/([0-9]*)/
+      const match = tweetIdRegex.exec(src)
+      const tweetId = match[1]
 
       return (
         <div className="card-cell media embedded">
           <TwitterTweetEmbed tweetId={tweetId} />
         </div>
-      );
+      )
     default:
-      if (src === "HIDDEN") {
+      if (src === 'HIDDEN') {
         return (
           <div className="card-cell media source-hidden">
             <h4>
@@ -84,11 +84,11 @@ const Media = ({ src, title }) => {
               Privacy concerns
             </h4>
           </div>
-        );
+        )
       } else {
-        return null;
+        return null
       }
   }
-};
+}
 
-export default Media;
+export default Media

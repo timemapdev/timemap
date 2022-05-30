@@ -1,34 +1,34 @@
-import React from "react";
-import { bindActionCreators } from "redux";
-import { connect } from "react-redux";
-import { scaleTime, timeMinute, timeSecond } from "d3";
-import hash from "object-hash";
+import React from 'react'
+import { bindActionCreators } from 'redux'
+import { connect } from 'react-redux'
+import { scaleTime, timeMinute, timeSecond } from 'd3'
+import hash from 'object-hash'
 
-import { setLoading, setNotLoading, updateTicks } from "../../actions";
-import * as selectors from "../../selectors";
-import copy from "../../common/data/copy.json";
+import { setLoading, setNotLoading, updateTicks } from '../../actions'
+import * as selectors from '../../selectors'
+import copy from '../../common/data/copy.json'
 
-import Header from "./atoms/Header";
-import Axis from "./Axis";
-import Clip from "./atoms/Clip";
-import Handles from "./atoms/Handles.js";
-import ZoomControls from "./atoms/ZoomControls.js";
-import Markers from "./atoms/Markers.js";
-import Events from "./atoms/Events.js";
-import Categories from "./Categories";
+import Header from './atoms/Header'
+import Axis from './Axis'
+import Clip from './atoms/Clip'
+import Handles from './atoms/Handles.js'
+import ZoomControls from './atoms/ZoomControls.js'
+import Markers from './atoms/Markers.js'
+import Events from './atoms/Events.js'
+import Categories from './Categories'
 
 class Timeline extends React.Component {
   constructor(props) {
-    super(props);
-    this.styleDatetime = this.styleDatetime.bind(this);
-    this.getDatetimeX = this.getDatetimeX.bind(this);
-    this.getY = this.getY.bind(this);
-    this.onApplyZoom = this.onApplyZoom.bind(this);
-    this.onSelect = this.onSelect.bind(this);
-    this.onDragStart = this.onDragStart.bind(this);
-    this.onDrag = this.onDrag.bind(this);
-    this.onDragEnd = this.onDragEnd.bind(this);
-    this.svgRef = React.createRef();
+    super(props)
+    this.styleDatetime = this.styleDatetime.bind(this)
+    this.getDatetimeX = this.getDatetimeX.bind(this)
+    this.getY = this.getY.bind(this)
+    this.onApplyZoom = this.onApplyZoom.bind(this)
+    this.onSelect = this.onSelect.bind(this)
+    this.onDragStart = this.onDragStart.bind(this)
+    this.onDrag = this.onDrag.bind(this)
+    this.onDragEnd = this.onDragEnd.bind(this)
+    this.svgRef = React.createRef()
     this.state = {
       isFolded: false,
       dims: props.dimensions,
@@ -36,40 +36,40 @@ class Timeline extends React.Component {
       scaleY: null,
       timerange: [null, null], // two datetimes
       dragPos0: null,
-      transitionDuration: 300,
-    };
+      transitionDuration: 300
+    }
   }
 
   componentDidMount() {
-    this.addEventListeners();
+    this.addEventListeners()
   }
 
   UNSAFE_componentWillReceiveProps(nextProps) {
     if (hash(nextProps) !== hash(this.props)) {
       this.setState({
         timerange: nextProps.app.timeline.range,
-        scaleX: this.makeScaleX(),
-      });
+        scaleX: this.makeScaleX()
+      })
     }
 
     if (
       hash(nextProps.activeCategories) !== hash(this.props.activeCategories) ||
       hash(nextProps.dimensions) !== hash(this.props.dimensions)
     ) {
-      const { trackHeight, marginTop } = nextProps.dimensions;
+      const { trackHeight, marginTop } = nextProps.dimensions
       this.setState({
         scaleY: this.makeScaleY(
           nextProps.activeCategories,
           trackHeight,
           marginTop
-        ),
-      });
+        )
+      })
     }
 
     if (
       nextProps.dimensions.trackHeight !== this.props.dimensions.trackHeight
     ) {
-      this.computeDims();
+      this.computeDims()
     }
 
     // nextProps.domain.events.forEach(e => {
@@ -78,14 +78,14 @@ class Timeline extends React.Component {
   }
 
   addEventListeners() {
-    window.addEventListener("resize", () => {
-      this.computeDims();
-    });
-    const element = document.querySelector(".timeline-wrapper");
+    window.addEventListener('resize', () => {
+      this.computeDims()
+    })
+    const element = document.querySelector('.timeline-wrapper')
     if (element !== null) {
-      element.addEventListener("transitionend", (event) => {
-        this.computeDims();
-      });
+      element.addEventListener('transitionend', event => {
+        this.computeDims()
+      })
     }
   }
 
@@ -94,36 +94,36 @@ class Timeline extends React.Component {
       .domain(this.state.timerange)
       .range([
         this.state.dims.marginLeft,
-        this.state.dims.width - this.state.dims.width_controls,
-      ]);
+        this.state.dims.width - this.state.dims.width_controls
+      ])
   }
 
   makeScaleY(categories, trackHeight, marginTop) {
-    const { features } = this.props;
+    const { features } = this.props
     if (features.GRAPH_NONLOCATED && features.GRAPH_NONLOCATED.categories) {
       categories = categories.filter(
-        (cat) => !features.GRAPH_NONLOCATED.categories.includes(cat.title)
-      );
+        cat => !features.GRAPH_NONLOCATED.categories.includes(cat.title)
+      )
     }
 
-    const extraPadding = 0;
+    const extraPadding = 0
     const catHeight =
       categories.length > 2
         ? trackHeight / categories.length
-        : trackHeight / (categories.length + 1);
+        : trackHeight / (categories.length + 1)
     const catsYpos = categories.map((g, i) => {
-      return (i + 1) * catHeight + marginTop + extraPadding / 2;
-    });
+      return (i + 1) * catHeight + marginTop + extraPadding / 2
+    })
 
-    return (cat) => {
-      const idx = categories.indexOf(cat);
-      return catsYpos[idx];
-    };
+    return cat => {
+      const idx = categories.indexOf(cat)
+      return catsYpos[idx]
+    }
   }
 
   componentDidUpdate(prevProps, prevState) {
     if (prevState.timerange !== this.state.timerange) {
-      this.setState({ scaleX: this.makeScaleX() });
+      this.setState({ scaleX: this.makeScaleX() })
     }
   }
 
@@ -131,35 +131,35 @@ class Timeline extends React.Component {
    * Returns the time scale (x) extent in minutes
    */
   getTimeScaleExtent() {
-    if (!this.state.scaleX) return 0;
-    const timeDomain = this.state.scaleX.domain();
-    return (timeDomain[1].getTime() - timeDomain[0].getTime()) / 60000;
+    if (!this.state.scaleX) return 0
+    const timeDomain = this.state.scaleX.domain()
+    return (timeDomain[1].getTime() - timeDomain[0].getTime()) / 60000
   }
 
   onClickArrow() {
-    this.setState((prevState) => {
-      return { isFolded: !prevState.isFolded };
-    });
+    this.setState(prevState => {
+      return { isFolded: !prevState.isFolded }
+    })
   }
 
   computeDims() {
-    const dom = this.props.ui.dom.timeline;
+    const dom = this.props.ui.dom.timeline
     if (document.querySelector(`#${dom}`) !== null) {
       const boundingClient = document
         .querySelector(`#${dom}`)
-        .getBoundingClientRect();
+        .getBoundingClientRect()
 
       this.setState(
         {
           dims: {
             ...this.props.dimensions,
-            width: boundingClient.width,
-          },
+            width: boundingClient.width
+          }
         },
         () => {
-          this.setState({ scaleX: this.makeScaleX() });
+          this.setState({ scaleX: this.makeScaleX() })
         }
-      );
+      )
     }
   }
 
@@ -168,35 +168,35 @@ class Timeline extends React.Component {
    * @param {String} direction: 'forward' / 'backwards'
    */
   onMoveTime(direction) {
-    const extent = this.getTimeScaleExtent();
+    const extent = this.getTimeScaleExtent()
     const newCentralTime = timeMinute.offset(
       this.state.scaleX.domain()[0],
       extent
-    );
+    )
 
     // if forward
-    let domain0 = newCentralTime;
-    let domainF = timeMinute.offset(newCentralTime, extent);
+    let domain0 = newCentralTime
+    let domainF = timeMinute.offset(newCentralTime, extent)
 
     // if backwards
-    if (direction === "backwards") {
-      domain0 = timeMinute.offset(newCentralTime, -(2 * extent));
-      domainF = timeMinute.offset(newCentralTime, -extent);
+    if (direction === 'backwards') {
+      domain0 = timeMinute.offset(newCentralTime, -(2 * extent))
+      domainF = timeMinute.offset(newCentralTime, -extent)
     }
 
-    this.props.methods.onUpdateTimerange([domain0, domainF]);
-    this.props.methods.onSelect([]);
+    this.props.methods.onUpdateTimerange([domain0, domainF])
+    this.props.methods.onSelect([])
   }
 
   onCenterTime(newCentralTime) {
-    const extent = this.getTimeScaleExtent();
+    const extent = this.getTimeScaleExtent()
 
-    const domain0 = timeMinute.offset(newCentralTime, -extent / 2);
-    const domainF = timeMinute.offset(newCentralTime, +extent / 2);
+    const domain0 = timeMinute.offset(newCentralTime, -extent / 2)
+    const domainF = timeMinute.offset(newCentralTime, +extent / 2)
 
     this.setState({ timerange: [domain0, domainF] }, () => {
-      this.props.methods.onUpdateTimerange(this.state.timerange);
-    });
+      this.props.methods.onUpdateTimerange(this.state.timerange)
+    })
   }
 
   /**
@@ -205,7 +205,7 @@ class Timeline extends React.Component {
    * Used for updates in the middle of a transition, for performance purposes
    */
   onSoftTimeRangeUpdate(timerange) {
-    this.setState({ timerange });
+    this.setState({ timerange })
   }
 
   /**
@@ -213,124 +213,124 @@ class Timeline extends React.Component {
    * @param {object} zoom: zoom level from zoomLevels
    */
   onApplyZoom(zoom) {
-    const extent = this.getTimeScaleExtent();
+    const extent = this.getTimeScaleExtent()
     const newCentralTime = timeMinute.offset(
       this.state.scaleX.domain()[0],
       extent / 2
-    );
-    const { rangeLimits } = this.props.app.timeline;
+    )
+    const { rangeLimits } = this.props.app.timeline
 
-    let newDomain0 = timeMinute.offset(newCentralTime, -zoom.duration / 2);
-    let newDomainF = timeMinute.offset(newCentralTime, zoom.duration / 2);
+    let newDomain0 = timeMinute.offset(newCentralTime, -zoom.duration / 2)
+    let newDomainF = timeMinute.offset(newCentralTime, zoom.duration / 2)
 
     if (rangeLimits) {
       // If the store contains absolute time limits,
       // make sure the zoom doesn't go over them
-      const minDate = rangeLimits[0];
-      const maxDate = rangeLimits[1];
+      const minDate = rangeLimits[0]
+      const maxDate = rangeLimits[1]
 
       if (newDomain0 < minDate) {
-        newDomain0 = minDate;
-        newDomainF = timeMinute.offset(newDomain0, zoom.duration);
+        newDomain0 = minDate
+        newDomainF = timeMinute.offset(newDomain0, zoom.duration)
       }
       if (newDomainF > maxDate) {
-        newDomainF = maxDate;
-        newDomain0 = timeMinute.offset(newDomainF, -zoom.duration);
+        newDomainF = maxDate
+        newDomain0 = timeMinute.offset(newDomainF, -zoom.duration)
       }
     }
 
     this.setState(
       {
-        timerange: [newDomain0, newDomainF],
+        timerange: [newDomain0, newDomainF]
       },
       () => {
-        this.props.actions.updateTicks(15);
-        this.props.methods.onUpdateTimerange(this.state.timerange);
+        this.props.actions.updateTicks(15)
+        this.props.methods.onUpdateTimerange(this.state.timerange)
       }
-    );
+    )
   }
 
   toggleTransition(isTransition) {
-    this.setState({ transitionDuration: isTransition ? 300 : 0 });
+    this.setState({ transitionDuration: isTransition ? 300 : 0 })
   }
 
   /*
    * Setup drag behavior
    */
   onDragStart(event) {
-    event.sourceEvent.stopPropagation();
+    event.sourceEvent.stopPropagation()
     this.setState(
       {
-        dragPos0: event.x,
+        dragPos0: event.x
       },
       () => {
-        this.toggleTransition(false);
+        this.toggleTransition(false)
       }
-    );
+    )
   }
 
   /*
    * Drag and update
    */
   onDrag(event) {
-    const drag0 = this.state.scaleX.invert(this.state.dragPos0).getTime();
-    const dragNow = this.state.scaleX.invert(event.x).getTime();
-    const timeShift = (drag0 - dragNow) / 1000;
+    const drag0 = this.state.scaleX.invert(this.state.dragPos0).getTime()
+    const dragNow = this.state.scaleX.invert(event.x).getTime()
+    const timeShift = (drag0 - dragNow) / 1000
 
-    const { range, rangeLimits } = this.props.app.timeline;
-    let newDomain0 = timeSecond.offset(range[0], timeShift);
-    let newDomainF = timeSecond.offset(range[1], timeShift);
+    const { range, rangeLimits } = this.props.app.timeline
+    let newDomain0 = timeSecond.offset(range[0], timeShift)
+    let newDomainF = timeSecond.offset(range[1], timeShift)
 
     if (rangeLimits) {
       // If the store contains absolute time limits,
       // make sure the zoom doesn't go over them
-      const minDate = rangeLimits[0];
-      const maxDate = rangeLimits[1];
+      const minDate = rangeLimits[0]
+      const maxDate = rangeLimits[1]
 
-      newDomain0 = newDomain0 < minDate ? minDate : newDomain0;
-      newDomainF = newDomainF > maxDate ? maxDate : newDomainF;
+      newDomain0 = newDomain0 < minDate ? minDate : newDomain0
+      newDomainF = newDomainF > maxDate ? maxDate : newDomainF
     }
 
     // Updates components without updating timerange
-    this.onSoftTimeRangeUpdate([newDomain0, newDomainF]);
+    this.onSoftTimeRangeUpdate([newDomain0, newDomainF])
   }
 
   /**
    * Stop dragging and update data
    */
   onDragEnd() {
-    this.toggleTransition(true);
-    this.props.methods.onUpdateTimerange(this.state.timerange);
+    this.toggleTransition(true)
+    this.props.methods.onUpdateTimerange(this.state.timerange)
   }
 
   getDatetimeX(datetime) {
-    return this.state.scaleX(datetime);
+    return this.state.scaleX(datetime)
   }
 
   getY(event) {
-    const { features, domain, activeCategories } = this.props;
-    const { USE_CATEGORIES, GRAPH_NONLOCATED } = features;
+    const { features, domain, activeCategories } = this.props
+    const { USE_CATEGORIES, GRAPH_NONLOCATED } = features
 
     const categoriesExist =
-      USE_CATEGORIES && activeCategories && activeCategories.length > 0;
+      USE_CATEGORIES && activeCategories && activeCategories.length > 0
 
     if (!categoriesExist) {
-      return this.state.dims.trackHeight / 1.5;
+      return this.state.dims.trackHeight / 1.5
     }
 
-    const { category } = event;
+    const { category } = event
 
     if (GRAPH_NONLOCATED && GRAPH_NONLOCATED.categories.includes(category)) {
-      const { project } = event;
+      const { project } = event
       return (
         this.state.dims.marginTop +
         domain.projects[project].offset +
         this.props.ui.eventRadius
-      );
+      )
     }
-    if (!this.state.scaleY) return 0;
+    if (!this.state.scaleY) return 0
 
-    return this.state.scaleY(category);
+    return this.state.scaleY(category)
   }
 
   /**
@@ -343,41 +343,41 @@ class Timeline extends React.Component {
    * the <g/> div.
    */
   styleDatetime(timestamp, category) {
-    return [null, null];
+    return [null, null]
   }
 
   onSelect(event) {
     if (this.props.features.ZOOM_TO_TIMEFRAME_ON_TIMELINE_CLICK) {
       const timeframe = Math.floor(
         this.props.features.ZOOM_TO_TIMEFRAME_ON_TIMELINE_CLICK / 2
-      );
-      const start = timeMinute.offset(event.datetime, -timeframe);
-      const end = timeMinute.offset(event.datetime, timeframe);
-      this.props.actions.updateTicks(1);
-      this.props.methods.onUpdateTimerange([start, end]);
+      )
+      const start = timeMinute.offset(event.datetime, -timeframe)
+      const end = timeMinute.offset(event.datetime, timeframe)
+      this.props.actions.updateTicks(1)
+      this.props.methods.onUpdateTimerange([start, end])
     }
-    this.props.methods.onSelect(event);
+    this.props.methods.onSelect(event)
   }
 
   render() {
-    const { isNarrative, app, domain } = this.props;
+    const { isNarrative, app, domain } = this.props
 
-    let classes = `timeline-wrapper ${this.state.isFolded ? " folded" : ""}`;
-    classes += app.narrative !== null ? " narrative-mode" : "";
-    const { dims } = this.state;
+    let classes = `timeline-wrapper ${this.state.isFolded ? ' folded' : ''}`
+    classes += app.narrative !== null ? ' narrative-mode' : ''
+    const { dims } = this.state
     const foldedStyle = {
       bottom: this.state.isFolded ? -dims.height : 0,
-      left: 110,
-    };
-    const heightStyle = { height: dims.height };
-    const extraStyle = { ...heightStyle, ...foldedStyle };
-    const contentHeight = { height: dims.contentHeight };
-    const { activeCategories: categories } = this.props;
+      left: 110
+    }
+    const heightStyle = { height: dims.height }
+    const extraStyle = { ...heightStyle, ...foldedStyle }
+    const contentHeight = { height: dims.contentHeight }
+    const { activeCategories: categories } = this.props
 
     const title = copy[this.props.app.language].timeline.info.replace(
-      "%n",
+      '%n',
       domain.eventCountInTimeRange
-    );
+    )
 
     return (
       <div
@@ -391,7 +391,7 @@ class Timeline extends React.Component {
           from={this.state.timerange[0]}
           to={this.state.timerange[1]}
           onClick={() => {
-            this.onClickArrow();
+            this.onClickArrow()
           }}
           hideInfo={isNarrative}
         />
@@ -412,7 +412,7 @@ class Timeline extends React.Component {
               />
               <Categories
                 dims={dims}
-                getCategoryY={(category) =>
+                getCategoryY={category =>
                   this.getY({ category, project: null })
                 }
                 onDragStart={this.onDragStart}
@@ -428,8 +428,8 @@ class Timeline extends React.Component {
               {app.timeline.dimensions.ticks === 1 && (
                 <Handles
                   dims={dims}
-                  onMoveTime={(dir) => {
-                    this.onMoveTime(dir);
+                  onMoveTime={dir => {
+                    this.onMoveTime(dir)
                   }}
                 />
               )}
@@ -442,7 +442,7 @@ class Timeline extends React.Component {
               <Markers
                 dims={dims}
                 selected={this.props.app.selected}
-                getEventX={(ev) => this.getDatetimeX(ev.datetime)}
+                getEventX={ev => this.getDatetimeX(ev.datetime)}
                 getEventY={this.getY}
                 categories={categories}
                 transitionDuration={this.state.transitionDuration}
@@ -458,11 +458,11 @@ class Timeline extends React.Component {
                 narrative={this.props.app.narrative}
                 getDatetimeX={this.getDatetimeX}
                 getY={this.getY}
-                getHighlights={(group) => {
-                  if (group === "None") {
-                    return [];
+                getHighlights={group => {
+                  if (group === 'None') {
+                    return []
                   }
-                  return categories.map((c) => c.group === group);
+                  return categories.map(c => c.group === group)
                 }}
                 getCategoryColor={this.props.methods.getCategoryColor}
                 transitionDuration={this.state.transitionDuration}
@@ -479,7 +479,7 @@ class Timeline extends React.Component {
           </div>
         </div>
       </div>
-    );
+    )
   }
 }
 
@@ -492,23 +492,23 @@ function mapStateToProps(state) {
       events: selectors.selectStackedEvents(state),
       eventCountInTimeRange: selectors.selectEventCountInTimeRange(state),
       projects: selectors.selectProjects(state),
-      narratives: state.domain.narratives,
+      narratives: state.domain.narratives
     },
     app: {
       selected: state.app.selected,
       language: state.app.language,
       timeline: state.app.timeline,
       narrative: state.app.associations.narrative,
-      coloringSet: state.app.associations.coloringSet,
+      coloringSet: state.app.associations.coloringSet
     },
     ui: {
       dom: state.ui.dom,
       styles: state.ui.style.selectedEvents,
       eventRadius: state.ui.eventRadius,
-      filterColors: state.ui.coloring.colors,
+      filterColors: state.ui.coloring.colors
     },
-    features: selectors.getFeatures(state),
-  };
+    features: selectors.getFeatures(state)
+  }
 }
 
 function mapDispatchToProps(dispatch) {
@@ -516,8 +516,8 @@ function mapDispatchToProps(dispatch) {
     actions: bindActionCreators(
       { setLoading, setNotLoading, updateTicks },
       dispatch
-    ),
-  };
+    )
+  }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Timeline);
+export default connect(mapStateToProps, mapDispatchToProps)(Timeline)
