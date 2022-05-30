@@ -1,6 +1,5 @@
 import React, { useRef } from 'react'
 import { useCallback } from 'react'
-import { typeForPath } from '../../../common/utilities'
 import { TwitterTweetEmbed } from 'react-twitter-embed'
 import TelegramPostEmbed from './TelegramEmbed'
 
@@ -11,7 +10,8 @@ const TITLE_LENGTH = 50
 //    - only show cover image and then lightbox when clicked
 //    - show video control plane?
 // TODO landscape image doesn't fit in box properly
-const Media = ({ src, title }) => {
+const Media = ({ media }) => {
+  const { title, type, src } = media
   const videoRef = useRef()
   const onVideoStart = useCallback(() => {
     return videoRef.current?.play()
@@ -20,12 +20,12 @@ const Media = ({ src, title }) => {
     return videoRef.current?.pause()
   }, [])
 
-  const type = typeForPath(src)
   const formattedTitle =
-    title && title.length > TITLE_LENGTH
+    title?.length > TITLE_LENGTH
       ? `${title.slice(0, TITLE_LENGTH + 1)}...`
       : title
 
+  debugger
   switch (type) {
     case 'Video':
       return (
@@ -69,9 +69,25 @@ const Media = ({ src, title }) => {
       const match = tweetIdRegex.exec(src)
       const tweetId = match[1]
 
-      return (
+      const t = (
         <div className="card-cell media embedded">
           <TwitterTweetEmbed tweetId={tweetId} />
+        </div>
+      )
+      debugger
+      return t
+
+    case 'Manual':
+      return (
+        <div className="card-cell media embedded">
+          <iframe
+            title="embedded source"
+            style={{ borderWidth: 0 }}
+            src={`https://drive.google.com/file/d/${src}/preview`}
+            width="450"
+            height="338"
+            allow="autoplay"
+          ></iframe>
         </div>
       )
     default:
