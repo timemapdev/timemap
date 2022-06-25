@@ -9,7 +9,8 @@ module.exports = {
   SHAPES_EXT: '',
   DATE_FMT: 'DD/MM/YYYY',
   TIME_FMT: 'hh:mm',
-  MAPBOX_TOKEN: 'pk.eyJ1IjoiZG1pdHJpZyIsImEiOiJjbDJjYnpreTIwY28yM2dudWQ0NGlxejl6In0.qzCHDJ0dRBn6BXy4fkqTIg',
+  MAPBOX_TOKEN:
+    'pk.eyJ1IjoiZG1pdHJpZyIsImEiOiJjbDJjYnpreTIwY28yM2dudWQ0NGlxejl6In0.qzCHDJ0dRBn6BXy4fkqTIg',
   store: {
     app: {
       map: {
@@ -17,7 +18,7 @@ module.exports = {
         startZoom: 6
       },
       timeline: {
-        range: [new Date(2022, 1, 23, 12), new Date(2022, 4, 23, 12)],
+        range: [new Date(2022, 1, 23, 12), new Date()],
         rangeLimits: [new Date(2022, 1, 1, 1), new Date()]
       }
     },
@@ -27,9 +28,9 @@ module.exports = {
           template: 'sourced'
         }
       },
-      tiles:{
-        current: "cl2xts14f000414t4geqv53r5", 
-        default: "cl2xts14f000414t4geqv53r5",
+      tiles: {
+        current: 'cl2xts14f000414t4geqv53r5',
+        default: 'cl2xts14f000414t4geqv53r5'
       }
     },
     features: {

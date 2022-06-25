@@ -393,6 +393,7 @@ class Timeline extends React.Component {
           onClick={() => {
             this.onClickArrow()
           }}
+          onUpdateTimerange={this.props.methods.onUpdateTimerange}
           hideInfo={isNarrative}
         />
         <div className="timeline-content" style={heightStyle}>
