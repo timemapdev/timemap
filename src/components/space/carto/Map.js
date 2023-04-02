@@ -136,11 +136,18 @@ class Map extends React.Component {
      */
     const { map: mapConfig, cluster: clusterConfig } = this.props.app
 
-    const map = L.map(this.props.ui.dom.map)
-      .setView(mapConfig.anchor, mapConfig.startZoom)
-      .setMinZoom(mapConfig.minZoom)
-      .setMaxZoom(mapConfig.maxZoom)
-      .setMaxBounds(mapConfig.maxBounds)
+    const bounds = L.latLngBounds([
+      [42, 22],
+      [53, 40]
+    ])
+    const map = L.map(this.props.ui.dom.map, {
+      maxBounds: [
+        [40, 20],
+        [55, 42]
+      ]
+    })
+
+    map.fitBounds(bounds)
 
     // Initialize supercluster index
     this.superclusterIndex = new Supercluster(clusterConfig)

@@ -12,11 +12,26 @@
           "Cada evento estará coloreado según la persona que dio el testimonio del evento."
         ],
         "colors": [
-          { "class": "category_group00", "label": "Categoría Grupo 00" },
-          { "class": "category_group01", "label": "Categoría Grupo 01" },
-          { "class": "category_group02", "label": "Categoría Grupo 02" },
-          { "class": "category_group03", "label": "Categoría Grupo 03" },
-          { "class": "other", "label": "Otras categorías" }
+          {
+            "class": "category_group00",
+            "label": "Categoría Grupo 00"
+          },
+          {
+            "class": "category_group01",
+            "label": "Categoría Grupo 01"
+          },
+          {
+            "class": "category_group02",
+            "label": "Categoría Grupo 02"
+          },
+          {
+            "class": "category_group03",
+            "label": "Categoría Grupo 03"
+          },
+          {
+            "class": "other",
+            "label": "Otras categorías"
+          }
         ]
       },
       "default": {
@@ -56,12 +71,30 @@
     },
     "timeline": {
       "zoomLevels": [
-        { "label": "20 años", "duration": 10512000 },
-        { "label": "2 años", "duration": 1051200 },
-        { "label": "3 meses", "duration": 129600 },
-        { "label": "3 días", "duration": 4320 },
-        { "label": "12 horas", "duration": 720 },
-        { "label": "1 hora", "duration": 60 }
+        {
+          "label": "20 años",
+          "duration": 10512000
+        },
+        {
+          "label": "2 años",
+          "duration": 1051200
+        },
+        {
+          "label": "3 meses",
+          "duration": 129600
+        },
+        {
+          "label": "3 días",
+          "duration": 4320
+        },
+        {
+          "label": "12 horas",
+          "duration": 720
+        },
+        {
+          "label": "1 hora",
+          "duration": 60
+        }
       ],
       "labels_title": "Testimonios",
       "labels": [
@@ -108,21 +141,38 @@
           "Each event is colored according the person that gave category of the event."
         ],
         "colors": [
-          { "class": "category_group00", "label": "Category Group 00" },
-          { "class": "category_group01", "label": "Category Group 01" },
-          { "class": "category_group02", "label": "Category Group 02" },
-          { "class": "category_group03", "label": "Category Group 03" },
-          { "class": "other", "label": "Other categories" }
+          {
+            "class": "category_group00",
+            "label": "Category Group 00"
+          },
+          {
+            "class": "category_group01",
+            "label": "Category Group 01"
+          },
+          {
+            "class": "category_group02",
+            "label": "Category Group 02"
+          },
+          {
+            "class": "category_group03",
+            "label": "Category Group 03"
+          },
+          {
+            "class": "other",
+            "label": "Other categories"
+          }
         ]
       },
       "default": {
-        "header": "Navigating the Platform",
         "intro": [
-          "Each small **dot** represents a **datapoint**, or incident. Click on a dot to see details. Hover over a larger ‘**cluster**’ dot to see how many events it represents.",
-          "Zoom in either with a mouse-scroll or by clicking a ‘cluster’ dot.",
-          "Use **filters** and **categories** to segment the data. Selecting certain filters and categories will show only the datapoints that relate to them. If no filters or categories are selected, all the datapoints are displayed.",
-          "Selecting more than one filter will introduce colour-coded datapoints, which allow you to compare types of incident across time and space. This feature works up to a maximum of six filters.",
-          "Once you have clicked on an event, use the left and right arrows to move back and forward day by day. You can also click and drag anywhere on the timeline. Use the handles on the right to select a date range."
+          "International Partnership for Human Rights (IPHR) is an international NGO based in Brussels, Tbilisi, and Kyiv. Since 2008, IPHR has worked to support local partners’ human rights work and amplify their voices at the international level. Over the years, we’ve developed extensive expertise in crisis response and documenting war crimes and other serious human rights abuses - in Ukraine, Nagorno-Karabakh, and Belarus. The evidence we collect is then translated into legal and quasi-legal action aimed at bringing perpetrators to account.",
+          "Since 2014, IPHR has been documenting war crimes and crimes against humanity committed in Ukraine, initially in the Donbas and Crimea - now, throughout Ukraine. Alongside our local and international partners, we have been collecting evidence of crimes committed by the Russian Federation and its agents in order to bring perpetrators to account through any and all available international, regional, and domestic accountability mechanisms.",
+          "Open-source intelligence (OSINT) is a key plank of our investigative strategy. Open-source evidence may either allow us to corroborate testimony provided by victims and witnesses or help to link potential perpetrators with specific crimes and identify their chains-of-command.",
+          "On this map you’ll find a small part of the collected evidence from open-sources and victims/witnesses' testimonies.",
+          "Contact us to help or get more information:",
+          "Twitter: [@IPHRosint](https://twitter.com/IPHRosint)",
+          "Telegram: [t.me/IPHRosint](https://t.me/IPHRosint)",
+          "Email: <osint@iphronline.org>"
         ],
         "notation": "Combinations of colours within a circle indicate multiple events in a single location.",
         "arrows": "Use the left/right arrows on the keboard to move back and forth between events in time."

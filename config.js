@@ -1,6 +1,6 @@
 module.exports = {
-  title: 'example',
-  display_title: 'example',
+  title: 'IPHR',
+  display_title: 'IPHR',
   SERVER_ROOT: 'https://data-helper-server.herokuapp.com',
   EVENTS_EXT: '/api/timemap_data/export_events/deeprows',
   ASSOCIATIONS_EXT: '/api/timemap_data/export_associations/deeprows',
@@ -15,6 +15,8 @@ module.exports = {
     app: {
       map: {
         anchor: [46.444431, 32.059769],
+        bounds: [[42, 22], [53, 40]],
+        maxBounds: [[40, 20], [55, 42]],
         startZoom: 6
       },
       timeline: {
