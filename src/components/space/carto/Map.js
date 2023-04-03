@@ -138,12 +138,12 @@ class Map extends React.Component {
 
     const bounds = L.latLngBounds([
       [42, 22],
-      [53, 40]
+      [53, 41]
     ])
     const map = L.map(this.props.ui.dom.map, {
       maxBounds: [
         [40, 20],
-        [55, 42]
+        [55, 43]
       ],
       zoomSnap: 0.25
     })
