@@ -144,7 +144,8 @@ class Map extends React.Component {
       maxBounds: [
         [40, 20],
         [55, 42]
-      ]
+      ],
+      zoomSnap: 0.25
     })
 
     map.fitBounds(bounds)
