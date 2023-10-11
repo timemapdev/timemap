@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
@@ -25,54 +25,42 @@ import colors from "../common/global";
 import { binarySearch, insetSourceFrom } from "../common/utilities";
 import { isMobileOnly } from "react-device-detect";
 
-class Dashboard extends React.Component {
-  constructor(props) {
-    super(props);
-
-    this.handleViewSource = this.handleViewSource.bind(this);
-    this.handleHighlight = this.handleHighlight.bind(this);
-    this.setNarrative = this.setNarrative.bind(this);
-    this.setNarrativeFromFilters = this.setNarrativeFromFilters.bind(this);
-    this.handleSelect = this.handleSelect.bind(this);
-    this.getCategoryColor = this.getCategoryColor.bind(this);
-    this.findEventIdx = this.findEventIdx.bind(this);
-    this.onKeyDown = this.onKeyDown.bind(this);
-    this.selectNarrativeStep = this.selectNarrativeStep.bind(this);
-  }
-
-  componentDidMount() {
-    if (!this.props.app.isMobile) {
-      this.props.actions.fetchDomain().then((domain) => {
-        console.log('FETCHED DOMAIN', domain)
-        return this.props.actions.updateDomain({
-          domain,
-          features: this.props.features,
+const Dashboard = ({app, actions, domain, features, ui, narrativeIdx}) => {
+  useEffect(() => {
+    if (!app.isMobile) {
+      fetch('/localData.json')
+      .then( res => res.json())
+      .then( data => {
+        actions.setInitialCategories(data.associations)
+        actions.updateDomain({
+          domain: data,
+          features: features,
         })
-    });
+      })
     }
     // NOTE: hack to get the timeline to always show. Not entirely sure why
     // this is necessary.
     window.dispatchEvent(new Event("resize"));
+  }, [])
+
+  const handleHighlight = (highlighted) => {
+    actions.updateHighlighted(highlighted || null);
   }
 
-  handleHighlight(highlighted) {
-    this.props.actions.updateHighlighted(highlighted || null);
+  const handleViewSource = (source) => {
+    actions.updateSource(source);
   }
 
-  handleViewSource(source) {
-    this.props.actions.updateSource(source);
-  }
-
-  findEventIdx(theEvent) {
-    const { events } = this.props.domain;
+  const findEventIdx = (theEvent) => {
+    const { events } = domain;
     return binarySearch(events, theEvent, (theev, otherev) => {
       return theev.datetime - otherev.datetime;
     });
   }
 
-  handleSelect(selected, axis) {
+  const handleSelect = (selected, axis) => {
     if (selected.length <= 0) {
-      this.props.actions.updateSelected([]);
+      actions.updateSelected([]);
       return;
     }
 
@@ -81,8 +69,8 @@ class Dashboard extends React.Component {
     if (axis === TIMELINE_AXIS) {
       matchedEvents.push(selected);
       // find in events
-      const { events } = this.props.domain;
-      const idx = this.findEventIdx(selected);
+      const { events } = domain;
+      const idx = findEventIdx(selected);
       // binary search can return event with different id
       if (events[idx].id !== selected.id) {
         matchedEvents.push(events[idx]);
@@ -119,32 +107,31 @@ class Dashboard extends React.Component {
       Object.values(std).forEach((ev) => matchedEvents.push(ev));
     }
 
-    this.props.actions.updateSelected(matchedEvents);
+    actions.updateSelected(matchedEvents);
   }
 
-  getCategoryColor(category) {
-    if (!this.props.features.USE_CATEGORIES) {
+  const getCategoryColor = (category) => {
+    if (!features.USE_CATEGORIES) {
       return colors.fallbackEventColor;
     }
 
-    const cat = this.props.ui.style.categories[category];
+    const cat = ui.style.categories[category];
     if (cat) {
       return cat;
     } else {
-      return this.props.ui.style.categories.default;
+      return ui.style.categories.default;
     }
   }
 
-  setNarrative(narrative) {
+  const setNarrative = (narrative) => {
     // only handleSelect if narrative is not null and has associated events
     if (narrative && narrative.steps.length >= 1) {
-      this.handleSelect([narrative.steps[0]]);
+      handleSelect([narrative.steps[0]]);
     }
-    this.props.actions.updateNarrative(narrative);
+    actions.updateNarrative(narrative);
   }
 
-  setNarrativeFromFilters(withSteps) {
-    const { app, domain } = this.props;
+  const setNarrativeFromFilters = (withSteps) => {
     let activeFilters = app.associations.filters;
 
     if (activeFilters.length === 0) {
@@ -174,7 +161,7 @@ class Dashboard extends React.Component {
 
     const name = activeFilters.map((f) => f.name).join("-");
     const desc = activeFilters.map((f) => f.description).join("\n\n");
-    this.setNarrative({
+    setNarrative({
       id: name,
       label: name,
       description: desc,
@@ -183,13 +170,13 @@ class Dashboard extends React.Component {
     });
   }
 
-  selectNarrativeStep(idx) {
+  const selectNarrativeStep = (idx) => {
     // Try to find idx if event passed rather than number
     if (typeof idx !== "number") {
       const e = idx[0] || idx;
 
-      if (this.props.app.associations.narrative) {
-        const { steps } = this.props.app.associations.narrative;
+      if (app.associations.narrative) {
+        const { steps } = app.associations.narrative;
         // choose the first event at a given location
         const locationEventId = e.id;
         const narrativeIdxObj = steps.find((s) => s.id === locationEventId);
@@ -201,38 +188,38 @@ class Dashboard extends React.Component {
       }
     }
 
-    const { narrative } = this.props.app.associations;
+    const { narrative } = app.associations;
     if (narrative === null) return;
 
     if (idx < narrative.steps.length && idx >= 0) {
       const step = narrative.steps[idx];
 
-      this.handleSelect([step]);
-      this.props.actions.updateNarrativeStepIdx(idx);
+      handleSelect([step]);
+      actions.updateNarrativeStepIdx(idx);
     }
   }
 
-  onKeyDown(e) {
-    const { narrative, selected } = this.props.app;
-    const { events } = this.props.domain;
+  const onKeyDown = (e) => {
+    const { narrative, selected } = app;
+    const { events } = domain;
 
     const prev = (idx) => {
       if (narrative === null) {
-        this.handleSelect(events[idx - 1], 0);
+        handleSelect(events[idx - 1], 0);
       } else {
-        this.selectNarrativeStep(this.props.narrativeIdx - 1);
+        selectNarrativeStep(narrativeIdx - 1);
       }
     };
     const next = (idx) => {
       if (narrative === null) {
-        this.handleSelect(events[idx + 1], 0);
+        handleSelect(events[idx + 1], 0);
       } else {
-        this.selectNarrativeStep(this.props.narrativeIdx + 1);
+        selectNarrativeStep(narrativeIdx + 1);
       }
     };
     if (selected.length > 0) {
       const ev = selected[selected.length - 1];
-      const idx = this.findEventIdx(ev);
+      const idx = findEventIdx(ev);
       switch (e.keyCode) {
         case 37: // left arrow
         case 38: // up arrow
@@ -241,7 +228,7 @@ class Dashboard extends React.Component {
           break;
         case 39: // right arrow
         case 40: // down arrow
-          if (idx < 0 || idx >= this.props.domain.length - 1) return;
+          if (idx < 0 || idx >= domain.length - 1) return;
           next(idx);
           break;
         default:
@@ -249,9 +236,7 @@ class Dashboard extends React.Component {
     }
   }
 
-  renderIntroPopup(isMobile, styles) {
-    const { app, actions } = this.props;
-
+  const renderIntroPopup = (isMobile, styles) => {
     const extraContent = isMobile ? (
       <div style={{ position: "relative", bottom: 0 }}>
         <h3 style={{ color: "var(--error-red)" }}>
@@ -278,166 +263,164 @@ class Dashboard extends React.Component {
     );
   }
 
-  render() {
-    const { actions, app, domain, features } = this.props;
-    const dateHeight = 80;
-    const padding = 2;
-    const checkMobile = isMobileOnly || window.innerWidth < 600;
+  const dateHeight = 80;
+  const padding = 2;
+  const checkMobile = isMobileOnly || window.innerWidth < 600;
 
-    const popupStyles = {
-      height: checkMobile ? "100vh" : "fit-content",
-      display: checkMobile ? "block" : "table",
-      width: checkMobile
-        ? "100vw"
-        : window.innerWidth > 768
-        ? "60vw"
-        : "calc(100vw - var(--toolbar-width))",
-      maxWidth: checkMobile ? "100vw" : 600,
-      maxHeight: checkMobile
-        ? "100vh"
-        : window.innerHeight > 768
-        ? `calc(100vh - ${app.timeline.dimensions.height}px - ${dateHeight}px)`
-        : "100vh",
-      left: checkMobile ? padding : "var(--toolbar-width)",
-      top: 0,
-      overflowY: "scroll",
-    };
+  const popupStyles = {
+    height: checkMobile ? "100vh" : "fit-content",
+    display: checkMobile ? "block" : "table",
+    width: checkMobile
+      ? "100vw"
+      : window.innerWidth > 768
+      ? "60vw"
+      : "calc(100vw - var(--toolbar-width))",
+    maxWidth: checkMobile ? "100vw" : 600,
+    maxHeight: checkMobile
+      ? "100vh"
+      : window.innerHeight > 768
+      ? `calc(100vh - ${app.timeline.dimensions.height}px - ${dateHeight}px)`
+      : "100vh",
+    left: checkMobile ? padding : "var(--toolbar-width)",
+    top: 0,
+    overflowY: "scroll",
+  };
 
-    if (checkMobile) {
-      const msg =
-        "This platform is not suitable for mobile. Please re-visit the site on a device with a larger screen.";
-      return (
-        <div>
-          {features.USE_COVER && !app.intro && (
-            <StaticPage showing={app.flags.isCover}>
-              {/* enable USE_COVER in config.js features, and customise your header */}
-              {/* pass 'actions.toggleCover' as a prop to your custom header */}
-              <TemplateCover
-                showAppHandler={() => {
-                  /* eslint-disable no-undef */
-                  alert(msg);
-                  /* eslint-enable no-undef */
-                }}
-              />
-            </StaticPage>
-          )}
-          {app.intro && <>{this.renderIntroPopup(true, popupStyles)}</>}
-          {!app.intro && !features.USE_COVER && (
-            <div className="fixedTooSmallMessage">{msg}</div>
-          )}
-        </div>
-      );
-    }
-
+  if (checkMobile) {
+    const msg =
+      "This platform is not suitable for mobile. Please re-visit the site on a device with a larger screen.";
     return (
       <div>
-        <Toolbar
-          isNarrative={!!app.associations.narrative}
-          methods={{
-            onTitle: actions.toggleCover,
-            onSelectFilter: (filters) =>
-              actions.toggleAssociations("filters", filters),
-            onCategoryFilter: (categories) =>
-              actions.toggleAssociations("categories", categories),
-            onShapeFilter: actions.toggleShapes,
-            onSelectNarrative: this.setNarrative,
-          }}
-        />
-        <Space
-          kind={"map" in app ? "map" : "space3d"}
-          onKeyDown={this.onKeyDown}
-          methods={{
-            onSelectNarrative: this.setNarrative,
-            getCategoryColor: this.getCategoryColor,
-            onSelect: app.associations.narrative
-              ? this.selectNarrativeStep
-              : (ev) => this.handleSelect(ev, 1),
-          }}
-        />
-        <Timeline
-          onKeyDown={this.onKeyDown}
-          methods={{
-            onSelect: app.associations.narrative
-              ? this.selectNarrativeStep
-              : (ev) => this.handleSelect(ev, 0),
-            onUpdateTimerange: actions.updateTimeRange,
-            getCategoryColor: this.getCategoryColor,
-          }}
-        />
-        <CardStack
-          timelineDims={app.timeline.dimensions}
-          onViewSource={this.handleViewSource}
-          onSelect={
-            app.associations.narrative ? this.selectNarrativeStep : () => null
-          }
-          onHighlight={this.handleHighlight}
-          onToggleCardstack={() => actions.updateSelected([])}
-          getCategoryColor={this.getCategoryColor}
-        />
-        <NarrativeControls
-          narrative={
-            app.associations.narrative
-              ? {
-                  ...app.associations.narrative,
-                  current: this.props.narrativeIdx,
-                }
-              : null
-          }
-          methods={{
-            onNext: () => this.selectNarrativeStep(this.props.narrativeIdx + 1),
-            onPrev: () => this.selectNarrativeStep(this.props.narrativeIdx - 1),
-            onSelectNarrative: this.setNarrative,
-          }}
-        />
-        <InfoPopup
-          language={app.language}
-          styles={popupStyles}
-          isOpen={app.flags.isInfopopup}
-          onClose={actions.toggleInfoPopup}
-        />
-        {this.renderIntroPopup(false, popupStyles)}
-        {app.debug ? (
-          <Notification
-            isNotification={app.flags.isNotification}
-            notifications={domain.notifications}
-            onToggle={actions.markNotificationsRead}
-          />
-        ) : null}
-        {features.USE_SEARCH && (
-          <Search
-            narrative={app.narrative}
-            queryString={app.searchQuery}
-            events={domain.events}
-            onSearchRowClick={this.handleSelect}
-          />
-        )}
-        {app.source ? (
-          <MediaOverlay
-            source={app.source}
-            onCancel={() => {
-              actions.updateSource(null);
-            }}
-          />
-        ) : null}
-        <LoadingOverlay
-          isLoading={app.loading || app.flags.isFetchingDomain}
-          ui={app.flags.isFetchingDomain}
-          language={app.language}
-        />
-        {features.USE_COVER && (
+        {features.USE_COVER && !app.intro && (
           <StaticPage showing={app.flags.isCover}>
             {/* enable USE_COVER in config.js features, and customise your header */}
             {/* pass 'actions.toggleCover' as a prop to your custom header */}
             <TemplateCover
-              showing={app.flags.isCover}
-              showAppHandler={actions.toggleCover}
+              showAppHandler={() => {
+                /* eslint-disable no-undef */
+                alert(msg);
+                /* eslint-enable no-undef */
+              }}
             />
           </StaticPage>
+        )}
+        {app.intro && <>{renderIntroPopup(true, popupStyles)}</>}
+        {!app.intro && !features.USE_COVER && (
+          <div className="fixedTooSmallMessage">{msg}</div>
         )}
       </div>
     );
   }
+
+  return (
+    <div>
+      <Toolbar
+        isNarrative={!!app.associations.narrative}
+        methods={{
+          onTitle: actions.toggleCover,
+          onSelectFilter: (filters) =>
+            actions.toggleAssociations("filters", filters),
+          onCategoryFilter: (categories) =>
+            actions.toggleAssociations("categories", categories),
+          onShapeFilter: actions.toggleShapes,
+          onSelectNarrative: setNarrative,
+        }}
+      />
+      <Space
+        kind={"map" in app ? "map" : "space3d"}
+        onKeyDown={onKeyDown}
+        methods={{
+          onSelectNarrative: setNarrative,
+          getCategoryColor: getCategoryColor,
+          onSelect: app.associations.narrative
+            ? selectNarrativeStep
+            : (ev) => handleSelect(ev, 1),
+        }}
+      />
+      <Timeline
+        onKeyDown={onKeyDown}
+        methods={{
+          onSelect: app.associations.narrative
+            ? selectNarrativeStep
+            : (ev) => handleSelect(ev, 0),
+          onUpdateTimerange: actions.updateTimeRange,
+          getCategoryColor: getCategoryColor,
+        }}
+      />
+      <CardStack
+        timelineDims={app.timeline.dimensions}
+        onViewSource={handleViewSource}
+        onSelect={
+          app.associations.narrative ? selectNarrativeStep : () => null
+        }
+        onHighlight={handleHighlight}
+        onToggleCardstack={() => actions.updateSelected([])}
+        getCategoryColor={getCategoryColor}
+      />
+      <NarrativeControls
+        narrative={
+          app.associations.narrative
+            ? {
+                ...app.associations.narrative,
+                current: narrativeIdx,
+              }
+            : null
+        }
+        methods={{
+          onNext: () => selectNarrativeStep(narrativeIdx + 1),
+          onPrev: () => selectNarrativeStep(narrativeIdx - 1),
+          onSelectNarrative: setNarrative,
+        }}
+      />
+      <InfoPopup
+        language={app.language}
+        styles={popupStyles}
+        isOpen={app.flags.isInfopopup}
+        onClose={actions.toggleInfoPopup}
+      />
+      {renderIntroPopup(false, popupStyles)}
+      {app.debug ? (
+        <Notification
+          isNotification={app.flags.isNotification}
+          notifications={domain.notifications}
+          onToggle={actions.markNotificationsRead}
+        />
+      ) : null}
+      {features.USE_SEARCH && (
+        <Search
+          narrative={app.narrative}
+          queryString={app.searchQuery}
+          events={domain.events}
+          onSearchRowClick={handleSelect}
+        />
+      )}
+      {app.source ? (
+        <MediaOverlay
+          source={app.source}
+          onCancel={() => {
+            actions.updateSource(null);
+          }}
+        />
+      ) : null}
+      <LoadingOverlay
+        isLoading={app.loading || app.flags.isFetchingDomain}
+        ui={app.flags.isFetchingDomain}
+        language={app.language}
+      />
+      {features.USE_COVER && (
+        <StaticPage showing={app.flags.isCover}>
+          {/* enable USE_COVER in config.js features, and customise your header */}
+          {/* pass 'actions.toggleCover' as a prop to your custom header */}
+          <TemplateCover
+            showing={app.flags.isCover}
+            showAppHandler={actions.toggleCover}
+          />
+        </StaticPage>
+      )}
+    </div>
+  );
 }
+
 
 function mapDispatchToProps(dispatch) {
   return {

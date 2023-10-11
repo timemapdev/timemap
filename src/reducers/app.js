@@ -17,7 +17,6 @@ import {
   UPDATE_SOURCE,
   TOGGLE_LANGUAGE,
   TOGGLE_SITES,
-  TOGGLE_FETCHING_DOMAIN,
   TOGGLE_FETCHING_SOURCES,
   TOGGLE_INFOPOPUP,
   TOGGLE_INTROPOPUP,
@@ -241,7 +240,6 @@ function fetchError(state, action) {
 }
 
 const toggleSites = toggleFlagAC("isShowingSites");
-const toggleFetchingDomain = toggleFlagAC("isFetchingDomain");
 const toggleFetchingSources = toggleFlagAC("isFetchingSources");
 const toggleInfoPopup = toggleFlagAC("isInfopopup");
 const toggleIntroPopup = toggleFlagAC("isIntropopup");
@@ -333,8 +331,6 @@ function app(appState = initial.app, action) {
       return toggleLanguage(appState, action);
     case TOGGLE_SITES:
       return toggleSites(appState);
-    case TOGGLE_FETCHING_DOMAIN:
-      return toggleFetchingDomain(appState);
     case TOGGLE_FETCHING_SOURCES:
       return toggleFetchingSources(appState);
     case TOGGLE_INFOPOPUP:

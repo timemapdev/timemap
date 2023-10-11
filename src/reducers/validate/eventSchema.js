@@ -16,7 +16,7 @@ function joiFromCustom(custom) {
 function createEventSchema(custom) {
   return Joi.object()
     .keys({
-      id: Joi.string().allow(""),
+      id: Joi.number(),
       description: Joi.string().allow("").required(),
       date: Joi.string().allow(""),
       time: Joi.string().allow(""),
