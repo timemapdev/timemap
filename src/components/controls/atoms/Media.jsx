@@ -67,15 +67,13 @@ const Media = ({ media }) => {
       const tweetIdRegex =
         /https?:\/\/twitter.com\/[0-9a-zA-Z_]{1,20}\/status\/([0-9]*)/
       const match = tweetIdRegex.exec(src)
-      const tweetId = match[1]
+      const tweetId = match?.[1]
 
-      const t = (
+      return (
         <div className="card-cell media embedded">
-          <Tweet tweetId={tweetId} />
+          <Tweet id={tweetId} />
         </div>
       )
-
-      return t
 
     case 'Manual':
       return (
