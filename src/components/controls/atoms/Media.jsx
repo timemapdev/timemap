@@ -2,7 +2,7 @@ import React, { useRef } from 'react'
 import { useCallback } from 'react'
 // import { TwitterTweetEmbed } from 'react-twitter-embed'
 import TelegramPostEmbed from './TelegramEmbed'
-import { Tweet } from 'react-tweet'
+import { Tweet } from './Tweet'
 import { ErrorBoundary } from '../../ErrorBoundary'
 
 const TITLE_LENGTH = 50
