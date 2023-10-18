@@ -3,6 +3,7 @@ import { useCallback } from 'react'
 // import { TwitterTweetEmbed } from 'react-twitter-embed'
 import TelegramPostEmbed from './TelegramEmbed'
 import { Tweet } from 'react-tweet'
+import { ErrorBoundary } from '../../ErrorBoundary'
 
 const TITLE_LENGTH = 50
 // TODO should videos
@@ -76,7 +77,9 @@ const Media = ({ media }) => {
 
       return (
         <div className="card-cell media embedded">
-          <Tweet id={tweetId} />
+          <ErrorBoundary fallback={<div>Failed to load tweet</div>}>
+            <Tweet id={tweetId} />
+          </ErrorBoundary>
         </div>
       )
 
