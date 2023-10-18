@@ -1,7 +1,8 @@
 import React, { useRef } from 'react'
 import { useCallback } from 'react'
-import { TwitterTweetEmbed } from 'react-twitter-embed'
+// import { TwitterTweetEmbed } from 'react-twitter-embed'
 import TelegramPostEmbed from './TelegramEmbed'
+import { Tweet } from 'react-tweet'
 
 const TITLE_LENGTH = 50
 // TODO should videos
@@ -70,7 +71,7 @@ const Media = ({ media }) => {
 
       const t = (
         <div className="card-cell media embedded">
-          <TwitterTweetEmbed tweetId={tweetId} />
+          <Tweet tweetId={tweetId} />
         </div>
       )
 
