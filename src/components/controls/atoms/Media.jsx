@@ -67,7 +67,12 @@ const Media = ({ media }) => {
       const tweetIdRegex =
         /https?:\/\/twitter.com\/[0-9a-zA-Z_]{1,20}\/status\/([0-9]*)/
       const match = tweetIdRegex.exec(src)
-      const tweetId = match?.[1]
+
+      if (!match || match.length < 2) {
+        return null
+      }
+
+      const tweetId = match[1]
 
       return (
         <div className="card-cell media embedded">
