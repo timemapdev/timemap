@@ -39,6 +39,7 @@ const Dashboard = ({app, actions, domain, features, ui, narrativeIdx}) => {
         const bounds = [
           [data.south, data.west], [data.north, data.east]
         ]
+        console.log('DATA', data)
         console.log('Loading bounds', bounds)
         actions.updateBounds(bounds)
       })
