@@ -36,9 +36,11 @@ const Dashboard = ({app, actions, domain, features, ui, narrativeIdx}) => {
           domain: data,
           features: features,
         })
-        actions.updateBounds([
+        const bounds = [
           [data.south, data.west], [data.north, data.east]
-        ])
+        ]
+        console.log('Loading bounds', bounds)
+        actions.updateBounds(bounds)
       })
     }
     // NOTE: hack to get the timeline to always show. Not entirely sure why

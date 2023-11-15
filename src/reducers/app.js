@@ -68,6 +68,7 @@ function updateColoringSet(appState, action) {
 }
 
 function updateBounds(appState, action) {
+  console.log("SETTING BOUNDS", { appState, action });
   return {
     ...appState,
     map: {
