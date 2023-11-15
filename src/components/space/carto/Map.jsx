@@ -107,7 +107,8 @@ class Map extends React.Component {
   // https://studio.mapbox.com/styles/dmitrig/cl2xts14f000414t4geqv53r5/edit/#9/37.78/-122.4241
 
   getTileUrl(tiles) {
-    return 'https://map.data-helper.net/styles/bright/{z}/{x}/{y}@2x.png'
+    // return 'https://map.data-helper.net/styles/bright/{z}/{x}/{y}@2x.png'
+    return 'https://planetserver-gl.fly.dev/data/v3/{z}/{x}/{y}.pbf'
   }
 
   /**
