@@ -36,6 +36,9 @@ const Dashboard = ({app, actions, domain, features, ui, narrativeIdx}) => {
           domain: data,
           features: features,
         })
+        actions.updateBounds([
+          [data.south, data.west], [data.north, data.east]
+        ])
       })
     }
     // NOTE: hack to get the timeline to always show. Not entirely sure why

@@ -149,6 +149,14 @@ export function updateNarrative(narrative) {
   };
 }
 
+export const UPDATE_BOUNDS = "UPDATE_BOUNDS";
+export function updateBounds(bounds) {
+  return {
+    type: UPDATE_BOUNDS,
+    bounds,
+  };
+}
+
 export const UPDATE_NARRATIVE_STEP_IDX = "UPDATE_NARRATIVE_STEP_IDX";
 export function updateNarrativeStepIdx(idx) {
   return {

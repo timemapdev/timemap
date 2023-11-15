@@ -136,6 +136,8 @@ class Map extends React.Component {
      */
     const { map: mapConfig, cluster: clusterConfig } = this.props.app
 
+    console.log("BOUNDS", app.map.bounds)
+
     const bounds = L.latLngBounds([
       [42, 22],
       [53, 41]

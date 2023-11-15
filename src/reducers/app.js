@@ -29,6 +29,7 @@ import {
   SET_INITIAL_CATEGORIES,
   SET_INITIAL_SHAPES,
   UPDATE_SEARCH_QUERY,
+  UPDATE_BOUNDS,
 } from "../actions";
 
 function updateHighlighted(appState, action) {
@@ -62,6 +63,16 @@ function updateColoringSet(appState, action) {
     associations: {
       ...appState.associations,
       coloringSet: action.coloringSet,
+    },
+  };
+}
+
+function updateBounds(appState, action) {
+  return {
+    ...appState,
+    map: {
+      ...appState.map,
+      bounds: action.bounds,
     },
   };
 }
@@ -320,6 +331,8 @@ function app(appState = initial.app, action) {
       return updateTimeRange(appState, action);
     case UPDATE_DIMENSIONS:
       return updateDimensions(appState, action);
+    case UPDATE_BOUNDS:
+      return updateBounds(appState, action);
     case UPDATE_NARRATIVE:
       return updateNarrative(appState, action);
     case UPDATE_NARRATIVE_STEP_IDX:
