@@ -109,6 +109,7 @@ class Map extends React.Component {
   getTileUrl(tiles) {
     // return 'https://planetserver-gl.fly.dev/styles/bright/{z}/{x}/{y}@2x.png'
     // return 'https://planetserver-gl.fly.dev/data/v3/{z}/{x}/{y}.pbf'
+    return "https://planetserver-gl.fly.dev/styles/basic-preview/{z}/{x}/{y}.png"
   }
 
   /**
